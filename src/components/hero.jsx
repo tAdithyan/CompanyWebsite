@@ -62,13 +62,12 @@ export default function Hero() {
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
               transition={{
-                duration: 1,
+                duration: 0.8,
                 ease: [0.25, 0.46, 0.45, 0.94],
-                delay: 0.2,
               }}
               className="relative p-6 md:p-0 drop-shadow-lg"
             >
@@ -122,10 +121,13 @@ export default function Hero() {
           <AnimatePresence mode="wait">
             <motion.div
               key={slide.image}
-              initial={{ opacity: 0, scale: 0.9, x: 50 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 1 }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.25, 0.46, 0.45, 0.94]
+              }}
               className="relative "
             >
            <img
