@@ -31,7 +31,7 @@ export const DataProvider = ({ children }) => {
     // --- OFFERS ---
     const [offers, setOffers] = useState(() => {
         const saved = localStorage.getItem("app_offers");
-        return saved ? JSON.parse(saved) : initialOffers;
+        return saved ? JSON.parse(saved) :  [];
     });
 
     useEffect(() => {
