@@ -3,6 +3,7 @@ import { Play, Check, Video, Camera, Clapperboard, MonitorPlay, ArrowUpRight } f
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
 import { Link } from 'react-router-dom';
+import SEO from "../components/SEO";
 
 const Services = () => {
     return (
@@ -10,6 +11,13 @@ const Services = () => {
             {/* Global Background Glows */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_rgba(255,138,0,0.15)_0%,_transparent_70%)] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle,_rgba(255,138,0,0.1)_0%,_transparent_70%)] pointer-events-none" />
+
+            <SEO
+                title="Our Services"
+                description="Explore our comprehensive advertising services including video editing, professional videography, billboard advertising, and brand strategy."
+                keywords="video editing, videography, billboard rental, brand strategy, advertising services, creative production"
+                ogType="website"
+            />
 
             <Header />
 

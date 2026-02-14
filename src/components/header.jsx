@@ -15,8 +15,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
-
   return (
     <>
       {/* HEADER */}
@@ -55,7 +53,8 @@ export default function Header() {
                 { name: "About", path: "/about" },
                 { name: "Services", path: "/services" },
                 { name: "Blogs", path: "/blogs" },
-                { name: "Solutions", path: "#" },
+                { name: "Contact Us", path: "/contact" },
+
 
               ].map((item) => (
                 <Link

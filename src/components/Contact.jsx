@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
+import { submitContact } from "../data/contacts";
+import { motion } from "framer-motion";
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -20,16 +21,25 @@ export function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsSubmitting(false);
-    setFormData({
-      name: "",
-      email: "",
-      company: "",
-      phone: "",
-      service: "",
-      message: "",
-    });
+    try {
+      await submitContact(formData);
+      alert("Message sent successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        service: "",
+        message: "",
+      });
+    } catch (error) {
+      const errorMessage = error.response?.data?.error
+        ? (Array.isArray(error.response.data.error) ? error.response.data.error.join(", ") : error.response.data.error)
+        : "Failed to send message. Please try again.";
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,7 +54,7 @@ export function Contact() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-            <div className="inline-flex items-center gap-2 mb-6">
+          <div className="inline-flex items-center gap-2 mb-6">
             <div className="w-8 h-0.5 bg-[#FF8A00]" />
             <span className="text-sm font-semibold text-[#FF8A00] uppercase tracking-wider">
               Contact Us
@@ -75,109 +85,85 @@ export function Contact() {
               Send us a message
             </h3>
 
-         <form onSubmit={handleSubmit} className="space-y-6">
-  <div className="grid md:grid-cols-2 gap-6 font-['Oswald']">
-    <Input
-      label="Full Name"
-      name="name"
-      value={formData.name}
-      onChange={handleChange}
-    />
-    <Input
-      label="Email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-    />
-  </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6 font-['Oswald']">
+                <Input
+                  label="Full Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+                <Input
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
 
-  <div>
-    <Input
-      label="Phone"
-      name="phone"
-      className="text-[#FF8A00] font-['Oswald']"
-      value={formData.phone}
-      onChange={handleChange}
-    />
-  </div>
+              <div>
+                <Input
+                  label="Phone"
+                  name="phone"
+                  className="text-[#FF8A00] font-['Oswald']"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
 
-  {/* AGE GROUP */}
-  <div>
-    <label className="text-sm font-semibold font-['Oswald'] text-[#FF8A00] mb-2 block">
-      Age Group
-    </label>
-    <select
-      name="ageGroup"
-      value={formData.ageGroup}
-      onChange={handleChange}
-      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 text-[#FF8A00] font-['Oswald']"
-      style={{
-        color: '#FF8A00',
-        backgroundColor: 'white'
-      }}
-      required
-    >
-      <option value="" style={{ color: '#FF8A00' }}>Select age group</option>
-      <option value="under-18" style={{ color: '#FF8A00' }}>Under 18</option>
-      <option value="18-24" style={{ color: '#FF8A00' }}>18 – 24</option>
-      <option value="25-34" style={{ color: '#FF8A00' }}>25 – 34</option>
-      <option value="35-44" style={{ color: '#FF8A00' }}>35 – 44</option>
-      <option value="45-54" style={{ color: '#FF8A00' }}>45 – 54</option>
-      <option value="55+" style={{ color: '#FF8A00' }}>55+</option>
-    </select>
-  </div>
 
-  {/* SERVICE */}
-  <div>
-    <label className="text-sm font-semibold font-['Oswald'] text-[#FF8A00] mb-2 block">
-      Service
-    </label>
-    <select
-      name="service"
-      value={formData.service}
-      onChange={handleChange}
-      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 text-[#FF8A00] font-['Oswald']"
-      style={{
-        color: '#FF8A00',
-        backgroundColor: 'white'
-      }}
-    >
-      <option value="" style={{ color: '#FF8A00' }}>Select a service</option>
-      {[
-        "Metro Advertising",
-        "Billboards",
-        "Digital Displays",
-        "Transit Ads",
-        "Airport Ads",
-      ].map((s) => (
-        <option key={s} style={{ color: '#FF8A00' }}>{s}</option>
-      ))}
-    </select>
-  </div>
 
-  {/* MESSAGE */}
-  <div>
-    <label className="text-sm font-semibold font-['Oswald'] text-[#FF8A00] mb-2 block">
-      Message
-    </label>
-    <textarea
-      name="message"
-      value={formData.message}
-      onChange={handleChange}
-      rows={5}
-      className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 resize-none font-['Oswald']"
-    />
-  </div>
+              {/* SERVICE */}
+              <div>
+                <label className="text-sm font-semibold font-['Oswald'] text-[#FF8A00] mb-2 block">
+                  Service
+                </label>
+                <select
+                  name="service"
+                  value={formData.service}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 text-[#FF8A00] font-['Oswald']"
+                  style={{
+                    color: '#FF8A00',
+                    backgroundColor: 'white'
+                  }}
+                >
+                  <option value="" style={{ color: '#FF8A00' }}>Select a service</option>
+                  {[
+                    "Metro Advertising",
+                    "Billboards",
+                    "Digital Displays",
+                    "Transit Ads",
+                    "Airport Ads",
+                  ].map((s) => (
+                    <option key={s} style={{ color: '#FF8A00' }}>{s}</option>
+                  ))}
+                </select>
+              </div>
 
-  <button
-    disabled={isSubmitting}
-    className="w-full rounded-full border border-orange-400 text-orange-400  hover:bg-[#e67700]  py-4 rounded-xl font-semibold font-['Oswald'] hover:bg-orange-400 hover:text-white transition hidden md:block transition disabled:opacity-50"
-  >
-    {isSubmitting ? "Sending..." : "Send Message"}
-  </button>
+              {/* MESSAGE */}
+              <div>
+                <label className="text-sm font-semibold font-['Oswald'] text-[#FF8A00] mb-2 block">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={5}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 resize-none font-['Oswald']"
+                />
+              </div>
 
- 
-</form>
+              <button
+                disabled={isSubmitting}
+                className="w-full rounded-full border border-orange-400 text-orange-400  hover:bg-[#e67700]  py-4 rounded-xl font-semibold font-['Oswald'] hover:bg-orange-400 hover:text-white transition hidden md:block transition disabled:opacity-50"
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+
+
+            </form>
 
           </motion.div>
 

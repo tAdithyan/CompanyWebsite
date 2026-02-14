@@ -1,47 +1,42 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Play } from "lucide-react";
+import { getOffers } from "../data/offers";
 
-const offers = [
-    {
-        id: 1,
-        headline: "WE BUILD STRONGER IDENTITIES",
-        subline: "Fueling Business Growth Through Strategic Brand Advertisements",
-        description: "Get a complete branding package with a 20% discount. Limited time offer.",
-        image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-        id: 2,
-        headline: "ELEVATE YOUR VISUAL IMPACT",
-        subline: "Professional Video Production & Editing Services",
-        description: "Book a full-day shoot and get free promotional reel editing.",
-        image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-        id: 3,
-        headline: "DOMINATE THE DIGITAL SPACE",
-        subline: "Comprehensive SEO & Social Media Strategies",
-        description: "50% OFF on your first SEO Audit for new clients.",
-        image: "https://images.unsplash.com/photo-1552553755-992b4506c138?q=80&w=2662&auto=format&fit=crop"
-    }
-];
+
 
 const OfferSection = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [offers, setOffers] = useState([]);
+    console.log(offers);
+    useEffect(() => {
+        const fetchOffers = async () => {
+            const data = await getOffers();
+            setOffers(data.data);
+        };
+        fetchOffers();
+    }, []);
 
     const nextSlide = () => {
-        setCurrentIndex((prev) => (prev + 1) % offers.length);
+        if (offers.length > 0) {
+            setCurrentIndex((prev) => (prev + 1) % offers.length);
+        }
     };
 
     const prevSlide = () => {
-        setCurrentIndex((prev) => (prev - 1 + offers.length) % offers.length);
+        if (offers.length > 0) {
+            setCurrentIndex((prev) => (prev - 1 + offers.length) % offers.length);
+        }
     };
 
     // Auto-slide every 5 seconds
     useEffect(() => {
+        if (offers.length === 0) return;
         const timer = setInterval(nextSlide, 5000);
         return () => clearInterval(timer);
-    }, []);
+    }, [offers.length]);
+
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     return (
         <section className="relative w-full py-16 md:py-24 overflow-hidden bg-[#EBEBEB] flex items-center justify-center">
@@ -79,8 +74,8 @@ const OfferSection = () => {
                 >
                     {/* The Image Background Billboard Face */}
                     <div
-                        className="relative w-full min-h-[350px] md:min-h-[400px] md:aspect-[2.2/1] rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.3)] overflow-hidden flex items-center p-6 md:p-16 border border-white/10 bg-cover bg-center transition-all duration-700"
-                        style={{ backgroundImage: `url(${offers[currentIndex].image})` }}
+                        className="relative w-full aspect-[2.2/1] rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.3)] overflow-hidden flex items-center p-6 md:p-16 border border-white/10 bg-cover bg-center transition-all duration-700"
+                        style={{ backgroundImage: offers.length > 0 && offers[currentIndex] ? `url(${BACKEND_URL}${offers[currentIndex].image})` : 'none' }}
                     >
                         {/* Dark Overlay for Readability */}
                         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent z-10"></div>
@@ -93,36 +88,38 @@ const OfferSection = () => {
 
                         {/* Content Carousel */}
                         <div className="relative z-20 w-full h-full flex flex-col justify-center">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentIndex}
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: -20, opacity: 0 }}
-                                    transition={{ duration: 0.5 }}
-                                    className="text-white max-w-4xl"
-                                >
-                                    <h2 className="font-['Oswald'] text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight uppercase drop-shadow-md mb-4 text-white">
-                                        {offers[currentIndex].headline}
-                                    </h2>
-                                    <div className="h-1 w-16 md:w-24 bg-white/40 mb-4 md:mb-6"></div>
-                                    <h3 className="font-['Urbanist'] text-sm md:text-2xl font-light text-white/90 tracking-widest uppercase mb-2">
-                                        {offers[currentIndex].subline}
-                                    </h3>
-                                    <p className="font-['Urbanist'] text-xs md:text-base text-white/80 max-w-xl hidden sm:block font-medium">
-                                        {offers[currentIndex].description}
-                                    </p>
-                                </motion.div>
-                            </AnimatePresence>
+                            {offers.length > 0 && (
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentIndex}
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: -20, opacity: 0 }}
+                                        transition={{ duration: 0.5 }}
+                                        className="text-white max-w-4xl"
+                                    >
+                                        <h2 className="font-['Oswald'] text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight uppercase drop-shadow-md mb-4 text-white">
+                                            {offers[currentIndex].headline}
+                                        </h2>
+                                        <div className="h-1 w-16 md:w-24 bg-white/40 mb-4 md:mb-6"></div>
+                                        <h3 className="font-['Urbanist'] text-sm md:text-2xl font-light text-white/90 tracking-widest uppercase mb-2">
+                                            {offers[currentIndex].subline}
+                                        </h3>
+                                        <p className="font-['Urbanist'] text-xs md:text-base text-white/80 max-w-xl hidden sm:block font-medium">
+                                            {offers[currentIndex].description}
+                                        </p>
+                                    </motion.div>
+                                </AnimatePresence>
+                            )}
                         </div>
 
                         {/* Decorative Side Elements (Fake visual depth) */}
                         <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-black/10 to-transparent pointer-events-none"></div>
 
                         {/* Play Button */}
-                        <button className="absolute right-4 md:right-16 top-1/2 -translate-y-1/2 w-12 h-12 md:w-20 md:h-20 rounded-full border-2 border-white/40 flex items-center justify-center hover:bg-white/20 transition-all group backdrop-blur-sm z-30 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        {/* <button className="absolute right-4 md:right-16 top-1/2 -translate-y-1/2 w-12 h-12 md:w-20 md:h-20 rounded-full border-2 border-white/40 flex items-center justify-center hover:bg-white/20 transition-all group backdrop-blur-sm z-30 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                             <Play className="w-5 h-5 md:w-8 md:h-8 text-white fill-white opacity-90 group-hover:opacity-100 transition-opacity" />
-                        </button>
+                        </button> */}
 
                         {/* Navigation Controls */}
                         <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 flex gap-2 md:gap-3 z-30">

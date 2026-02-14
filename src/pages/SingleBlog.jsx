@@ -1,19 +1,38 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, Tag, ArrowUpRight } from "lucide-react";
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
-import { blogs } from "../data/blogs";
+import { fetchBlogById, fetchBlogs } from "../data/blogs";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import SEO from "../components/SEO";
 
 const SingleBlogPage = () => {
     const { id } = useParams();
-    const blog = blogs.find((b) => b.id === parseInt(id));
+    const [blog, setBlog] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Scroll to top on load
     useEffect(() => {
+        const loadBlog = async () => {
+            setLoading(true);
+            const data = await fetchBlogById(id);
+            setBlog(data);
+            setLoading(false);
+        };
+        loadBlog();
+
+        // Scroll to top on load
         window.scrollTo(0, 0);
     }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#EBEBEB] flex items-center justify-center font-['Urbanist']">
+                <div className="text-xl font-bold text-gray-500">Loading...</div>
+            </div>
+        );
+    }
 
     if (!blog) {
         return (
@@ -28,15 +47,22 @@ const SingleBlogPage = () => {
         );
     }
 
-    // Get random related posts (excluding current)
-    const relatedPosts = blogs
-        .filter(b => b.id !== blog.id)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
+    // Since we don't have all blogs here, we might need another strategy for related posts
+    // For now, removing related posts logic or fetching random ones could be done separately
+    // Keeping it simple for now by removing it or setting empty
+    const relatedPosts = [];
 
     return (
         <div className="min-h-screen bg-[#EBEBEB] text-[#111827] relative overflow-x-hidden">
             <Header />
+
+            <SEO
+                title={blog.title}
+                description={blog.Excerpt}
+                keywords={`advertising blog, ${blog.title}, marketing article, creative news`}
+                ogImage={BACKEND_URL + blog.image}
+                ogType="article"
+            />
 
             {/* Progress Bar (Optional) */}
             <motion.div
@@ -54,33 +80,22 @@ const SingleBlogPage = () => {
 
                     {/* Title & Meta */}
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center gap-2 mb-6 bg-white px-4 py-1.5 rounded-full shadow-sm text-xs font-bold text-[#FF8A00] uppercase tracking-wider mx-auto">
-                            <Tag className="w-3 h-3" />
-                            {blog.category}
-                        </div>
+
 
                         <h1 className="font-['Oswald'] text-4xl md:text-6xl font-bold text-[#111827] mb-6 leading-tight">
                             {blog.title}
                         </h1>
+                        <p className="font-['Urbanist'] text-lg md:text-xl font-bold text-[#111827] mb-6 leading-tight">
+                            {blog.Excerpt}
+                        </p>
 
-                        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500 font-medium">
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-                                    <img src={`https://ui-avatars.com/api/?name=${blog.author}&background=random`} alt={blog.author} />
-                                </div>
-                                <span className="text-[#111827] font-bold">{blog.author}</span>
-                            </div>
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {blog.date}</span>
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {blog.readTime}</span>
-                        </div>
+
                     </div>
 
                     {/* Hero Image */}
                     <div className="rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.1)] mb-16 aspect-video">
                         <img
-                            src={blog.image}
+                            src={BACKEND_URL + blog.image}
                             alt={blog.title}
                             className="w-full h-full object-cover"
                         />
@@ -98,19 +113,7 @@ const SingleBlogPage = () => {
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
 
-                    {/* Share / Tags Footer */}
-                    <div className="border-t border-gray-200 pt-8 mt-12 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="font-bold text-[#111827]">
-                            Share this article:
-                        </div>
-                        <div className="flex gap-4">
-                            {['Twitter', 'LinkedIn', 'Facebook'].map(platform => (
-                                <button key={platform} className="px-4 py-2 bg-white rounded-full text-sm font-bold text-gray-600 shadow-sm hover:text-[#FF8A00] hover:shadow-md transition-all">
-                                    {platform}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+
                 </article>
 
 

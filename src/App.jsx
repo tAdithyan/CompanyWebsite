@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import TopBar from './components/TopBar';
 import Header from './components/header';
@@ -18,12 +18,22 @@ import BlogsPage from "./pages/Blogs";
 import SingleBlogPage from "./pages/SingleBlog";
 
 import OfferSection from "./components/offersection";
+import LocationModal from "./components/LocationModal";
+import { trackVisitorLocation } from "./data/analytics";
+import { HelmetProvider } from 'react-helmet-async';
+
+import SEO from "./components/SEO";
 
 // Home Component containing existing sections
 const Home = () => {
   return (
     <main className="relative w-full min-h-screen bg-[#EBEBEB]">
-
+      <SEO
+        title="Home"
+        description="Welcome to Billford Advertising. We provide premium billboards, digital marketing, and creative advertising solutions."
+        keywords="advertising agency, billboard advertising, digital marketing, outdoor advertising, creative ads, branding"
+        ogType="website"
+      />
       <Header />
 
       {/* Hero Section - Only this one has overlay effect */}
@@ -36,10 +46,10 @@ const Home = () => {
         <AboutCompany />
       </section>
 
-      {/* Offer Section (Billboard Style) */}
+      {/* Offer Section (Billboard Style)
       <section id="offers" className="relative z-30">
         <OfferSection />
-      </section>
+      </section> */}
 
       {/* Spotlight - Normal scroll */}
       <section id="spotlight" className="relative z-40">
@@ -60,8 +70,23 @@ const Home = () => {
   );
 };
 
-function App() {
+import { DataProvider } from "./context/DataContext";
+import { AuthProvider } from "./context/AuthContext";
+import AdminLayout from "./components/admin/AdminLayout";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminOffers from "./pages/admin/AdminOffers";
+import AdminContacts from "./pages/admin/AdminContacts";
+import Login from "./pages/admin/Login";
+import ScrollToTop from "./components/ScrollToTop";
+import ContactPage from "./pages/Contact";
+import WhatsAppButton from "./components/WhatsAppButton";
 
+function App() {
+  const [showLocationModal, setShowLocationModal] = useState(() => {
+    return localStorage.getItem("locationPermission") === null;
+  });
 
   const getAddressFromCoords = async (lat, lon) => {
     try {
@@ -81,42 +106,92 @@ function App() {
     }
   };
 
-  useEffect(() => {
+  const handleFetchLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
 
-          console.log("Latitude:", latitude);
-          console.log("Longitude:", longitude);
-
           const locationData = await getAddressFromCoords(latitude, longitude);
 
-          console.log("Full Address:", locationData.display_name);
-          console.log("City:", locationData.address.city || locationData.address.town);
-          console.log("State:", locationData.address.state);
-          console.log("Country:", locationData.address.country);
+          if (locationData) {
+            // Track in backend
+            try {
+              await trackVisitorLocation({
+                city: locationData.address.state_district || locationData.address.city || locationData.address.town
+              });
+              console.log("Location tracked successfully in backend");
+            } catch (err) {
+              console.error("Failed to track location in backend:", err);
+            }
+          }
+
+          localStorage.setItem("locationPermission", "granted");
         },
         (error) => {
           console.error("Location access denied or error:", error);
+          localStorage.setItem("locationPermission", "denied");
         }
       );
     } else {
       console.log("Geolocation is not supported by this browser.");
     }
+  };
+
+  const onAcceptLocation = () => {
+    setShowLocationModal(false);
+    handleFetchLocation();
+  };
+
+  const onCancelLocation = () => {
+    setShowLocationModal(false);
+    localStorage.setItem("locationPermission", "denied");
+  };
+
+  useEffect(() => {
+    const permission = localStorage.getItem("locationPermission");
+    if (permission === "granted") {
+      handleFetchLocation();
+    }
   }, []);
 
-
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/blogs" element={<BlogsPage />} />
-        <Route path="/blog/:id" element={<SingleBlogPage />} />
-      </Routes>
-    </Router>
+    <HelmetProvider>
+      <AuthProvider>
+        <DataProvider>
+          <Router>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/blog/:id" element={<SingleBlogPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+
+              {/* Admin Login */}
+              <Route path="/admin/login" element={<Login />} />
+
+              {/* Protected Admin Routes */}
+              <Route path="/admin" element={<ProtectedRoute />}>
+                <Route element={<AdminLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="blogs" element={<AdminBlogs />} />
+                  <Route path="offers" element={<AdminOffers />} />
+                  <Route path="contacts" element={<AdminContacts />} />
+                </Route>
+              </Route>
+            </Routes>
+            <WhatsAppButton />
+            <LocationModal
+              isOpen={showLocationModal}
+              onAccept={onAcceptLocation}
+              onCancel={onCancelLocation}
+            />
+          </Router>
+        </DataProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

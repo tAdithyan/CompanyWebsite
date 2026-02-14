@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Calendar, User, Tag, Clock } from "lucide-react";
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import SEO from "../components/SEO";
+
 
 import { Link } from "react-router-dom";
-import { blogs } from "../data/blogs";
+import { useData } from "../context/DataContext";
+import { fetchBlogs } from "../data/blogs";
 
 const BlogCard = ({ blog, featured = false }) => (
-    <Link to={`/blog/${blog.id}`} className="block h-full">
+    <Link to={`/blog/${blog._id}`} className="block h-full">
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -18,38 +22,27 @@ const BlogCard = ({ blog, featured = false }) => (
             {/* Image Container */}
             <div className={`overflow-hidden relative ${featured ? 'h-64 md:h-full' : 'h-64'}`}>
                 <img
-                    src={blog.image}
+                    src={BACKEND_URL + blog.image}
                     alt={blog.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-[#FF8A00] flex items-center gap-1 uppercase tracking-wider shadow-sm">
-                    <Tag className="w-3 h-3" />
-                    {blog.category}
-                </div>
+
             </div>
 
             {/* Content */}
             <div className="p-8 flex flex-col justify-center h-full">
-                <div className="flex items-center gap-4 text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {blog.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {blog.readTime}</span>
-                </div>
+
 
                 <h3 className={`font-['Oswald'] font-bold text-[#111827] mb-4 group-hover:text-[#FF8A00] transition-colors ${featured ? 'text-3xl md:text-4xl' : 'text-2xl'}`}>
                     {blog.title}
                 </h3>
 
                 <p className="font-['Urbanist'] text-gray-600 mb-6 line-clamp-3">
-                    {blog.excerpt}
+                    {blog.Excerpt}
                 </p>
 
                 <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center gap-2 text-sm font-bold text-[#111827]">
-                        <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-                            <img src={`https://ui-avatars.com/api/?name=${blog.author}&background=random`} alt={blog.author} />
-                        </div>
-                        {blog.author}
-                    </div>
+
 
                     <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center group-hover:bg-[#FF8A00] group-hover:border-[#FF8A00] group-hover:text-white transition-all duration-300">
                         <ArrowUpRight className="w-5 h-5 rotate-45 group-hover:rotate-0 transition-transform duration-300" />
@@ -61,9 +54,25 @@ const BlogCard = ({ blog, featured = false }) => (
 );
 
 const BlogsPage = () => {
+    const [blogs, setBlogs] = useState([]);
+    useEffect(() => {
+        const loadBlogs = async () => {
+            const data = await fetchBlogs();
+            console.log(data);
+            setBlogs(data || []);
+        };
+        loadBlogs();
+    }, []);
     return (
         <div className="min-h-screen bg-[#EBEBEB] text-[#111827] relative overflow-hidden">
             <Header />
+
+            <SEO
+                title="Blog"
+                description="Read our latest insights, success stories, and expert advice on advertising, marketing, and business growth."
+                keywords="advertising blog, marketing insights, branding tips, digital trends, success stories"
+                ogType="website"
+            />
 
             {/* Background Decor */}
             <div className="fixed top-0 left-0 w-full h-[800px] bg-[radial-gradient(circle_at_50%_0%,_rgba(255,138,0,0.08)_0%,_transparent_70%)] pointer-events-none" />
@@ -103,9 +112,11 @@ const BlogsPage = () => {
                         </div>
 
                         {/* Featured Post */}
-                        <div className="mb-12">
-                            <BlogCard blog={blogs[0]} featured={true} />
-                        </div>
+                        {blogs.length > 0 && (
+                            <div className="mb-12">
+                                <BlogCard blog={blogs[0]} featured={true} />
+                            </div>
+                        )}
 
                         {/* Blog Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

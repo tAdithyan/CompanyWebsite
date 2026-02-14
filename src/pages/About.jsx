@@ -2,6 +2,7 @@ import { Play, ShieldCheck, PieChart, Users, Facebook, Twitter, Linkedin, Instag
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
 import { Link } from 'react-router-dom';
+import SEO from "../components/SEO";
 
 // --- Hero Section ---
 const HeroSection = () => {
@@ -191,6 +192,13 @@ const About = () => {
             {/* Global Background Glows */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_rgba(255,138,0,0.15)_0%,_transparent_70%)] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle,_rgba(255,138,0,0.1)_0%,_transparent_70%)] pointer-events-none" />
+
+            <SEO
+                title="About Us"
+                description="Learn more about Billford Advertising, our mission, our creative experts, and how we help businesses achieve digital growth."
+                keywords="advertising team, marketing experts, our story, agency mission, creative growth"
+                ogType="website"
+            />
 
             <Header />
             <main className="font-['Urbanist']">
