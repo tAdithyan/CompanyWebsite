@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getOffers, createOffer, updateOffer as updateOfferApi, deleteOffer as deleteOfferApi } from "../../data/offers";
 import { Pencil, Trash2, Plus, X, Crop } from "lucide-react";
 import ImageCropper from "../../components/admin/ImageCropper";
+import Loading from "../../components/common/Loading";
 
 const AdminOffers = () => {
     const [offers, setOffers] = useState([]);
@@ -9,6 +10,8 @@ const AdminOffers = () => {
     const [editingOffer, setEditingOffer] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [imageError, setImageError] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
 
     // Cropping State
     const [showCropper, setShowCropper] = useState(false);
@@ -27,10 +30,13 @@ const AdminOffers = () => {
 
     const refreshOffers = async () => {
         try {
+            setLoading(true);
             const data = await getOffers();
             setOffers(data.data || []);
         } catch (error) {
             console.error("Error fetching offers:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -87,6 +93,7 @@ const AdminOffers = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setActionLoading(true);
 
         const data = new FormData();
         data.append('headline', formData.headline);
@@ -102,11 +109,12 @@ const AdminOffers = () => {
             } else {
                 if (!imageFile) {
                     setImageError("Please select and crop an image");
+                    setActionLoading(false);
                     return;
                 }
                 await createOffer(data);
             }
-            refreshOffers();
+            await refreshOffers();
             setIsModalOpen(false);
         } catch (error) {
             console.error("Error saving offer:", error);
@@ -114,22 +122,32 @@ const AdminOffers = () => {
                 ? (Array.isArray(error.response.data.error) ? error.response.data.error.join(", ") : error.response.data.error)
                 : "Failed to save offer. Please try again.";
             alert(errorMessage);
+        } finally {
+            setActionLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this offer?")) {
             try {
+                setActionLoading(true);
                 await deleteOfferApi(id);
-                refreshOffers();
+                await refreshOffers();
             } catch (error) {
                 console.error("Error deleting offer:", error);
+            } finally {
+                setActionLoading(false);
             }
         }
     };
 
+    if (loading && offers.length === 0) {
+        return <Loading />;
+    }
+
     return (
         <div>
+            {actionLoading && <Loading fullScreen />}
             <div className="flex items-center justify-between mb-8">
                 <h1 className="font-['Oswald'] text-3xl font-bold text-[#111827]">Manage Offers</h1>
                 <button
@@ -146,7 +164,7 @@ const AdminOffers = () => {
                 {offers.map(offer => (
                     <div key={offer._id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                         <div className="h-48 relative overflow-hidden group">
-                            <img src={`${BACKEND_URL}${offer.image}`} alt={offer.headline} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <img src={`${offer.image}`} alt={offer.headline} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-4">
                                 <button
                                     onClick={() => openModal(offer)}
@@ -226,7 +244,7 @@ const AdminOffers = () => {
                                     {(croppedPreview || (editingOffer && editingOffer.image)) && (
                                         <div className="relative group rounded-2xl overflow-hidden border-2 border-gray-100 aspect-[2.2/1] bg-gray-50">
                                             <img
-                                                src={croppedPreview || `${BACKEND_URL}${editingOffer.image}`}
+                                                src={croppedPreview || `${editingOffer.image}`}
                                                 alt="Preview"
                                                 className="w-full h-full object-cover"
                                             />

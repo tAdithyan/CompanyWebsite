@@ -1,49 +1,67 @@
-import { CheckCircleIcon, SparklesIcon, RocketLaunchIcon, ShieldCheckIcon, ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
+import {
+  TruckIcon,
+  EyeIcon,
+  AdjustmentsHorizontalIcon,
+  MapPinIcon,
+  TvIcon,
+  ArrowPathIcon
+} from "@heroicons/react/24/outline";
 
 export default function WhyChooseSection() {
   const features = [
     {
-      icon: SparklesIcon,
-      title: "Creative Excellence",
-      description: "We transform ordinary ideas into extraordinary outdoor advertising campaigns that capture attention and drive results.",
+      icon: TruckIcon,
+      title: "Premium Transit Advertising Experience",
+      description: "Reach thousands of commuters daily through our high-definition 24-inch and 32-inch LED network.",
     },
     {
-      icon: RocketLaunchIcon,
-      title: "Fast Execution",
-      description: "From concept to installation, we deliver high-impact billboard campaigns quickly without compromising quality.",
+      icon: EyeIcon,
+      title: "Captive Audience Engagement",
+      description: "Unlike traditional billboards, our eye-level screens ensure your message is seen and remembered throughout the entire journey.",
     },
     {
-      icon: ShieldCheckIcon,
-      title: "Premium Locations",
-      description: "Strategic placement in high-traffic areas ensures maximum visibility and reach for your brand message.",
+      icon: AdjustmentsHorizontalIcon,
+      title: "Customizable Advertising Solutions",
+      description: "From localized bus routes to grand outdoor events, we tailor our screen time to meet your specific business goals.",
     },
     {
-      icon: ClockIcon,
-      title: "24/7 Support",
-      description: "Our dedicated team is always available to support your campaign needs, anytime you need us.",
+      icon: MapPinIcon,
+      title: "Strategic Local Placement",
+      description: "We dominate the most high-traffic routes and popular hubs across the Thrissur district.",
     },
     {
-      icon: UsersIcon,
-      title: "Expert Team",
-      description: "Experienced designers and advertising specialists work together to bring your vision to life.",
+      icon: TvIcon,
+      title: "Vibrant High-Definition Displays",
+      description: "Using state-of-the-art Android LED technology to ensure your brand colors and visuals are always crisp and clear.",
     },
     {
-      icon: CheckCircleIcon,
-      title: "Proven Results",
-      description: "Trusted by leading brands with a track record of successful campaigns that deliver measurable impact.",
+      icon: ArrowPathIcon,
+      title: "Consistent Visibility",
+      description: "Reliable uptime and high-frequency ad rotation across every route and every screen in our network.",
     },
   ];
 
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-[#EBEBEB] py-16 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text, text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Why Choose Us
+          <div className="inline-flex items-center gap-2 mb-4 justify-center">
+            <div className="w-8 h-0.5 bg-[#FF8A00]" />
+            <span className="text-sm font-semibold text-[#FF8A00] uppercase tracking-wider">
+              Our Vision
+            </span>
+            <div className="w-8 h-0.5 bg-[#FF8A00]" />
+          </div>
+          <h2 className="font-['Oswald'] text-4xl md:text-6xl font-bold text-[#111827] mb-4">
+            WHY <span className="text-[#FF8A00]">CHOOSE</span> US
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-            We deliver outstanding outdoor advertising solutions that help your brand stand out in a crowded world.
+          <p className="text-xl text-[#FF8A00] font-['Oswald'] font-bold mb-6 uppercase tracking-widest">
+            Your Vision. Our Screen. Unforgettable Impact.
+          </p>
+          <p className="text-lg text-gray-600 max-w-4xl mx-auto font-medium leading-relaxed">
+            Where powerful brand stories unfold through innovation, reach, and impeccable visibility —
+            crafted with passion, precision, and a touch of digital magic.
           </p>
         </div>
 
@@ -54,15 +72,15 @@ export default function WhyChooseSection() {
             return (
               <div
                 key={index}
-                className="group relative bg-gray-50 rounded-2xl p-8 hover:bg-gray-100 transition-all duration-300 hover:shadow-xl"
+                className="group relative bg-white rounded-3xl p-8 hover:bg-gray-50 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100"
               >
-                <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Icon className="w-8 h-8 text-white" />
+                <div className="flex items-center justify-center w-14 h-14 bg-[#FF8A00]/10 rounded-2xl mb-6 group-hover:bg-[#FF8A00] transition-colors duration-300">
+                  <Icon className="w-8 h-8 text-[#FF8A00] group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <h3 className="font-['Oswald'] text-xl font-bold text-[#111827] mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-500 leading-relaxed font-medium">
                   {feature.description}
                 </p>
               </div>

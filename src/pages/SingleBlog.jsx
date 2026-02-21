@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Calendar, Tag, ArrowUpRight } from "lucide-react";
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
 import { fetchBlogById, fetchBlogs } from "../data/blogs";
+import Loading from "../components/common/Loading";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import SEO from "../components/SEO";
 
@@ -15,10 +16,15 @@ const SingleBlogPage = () => {
 
     useEffect(() => {
         const loadBlog = async () => {
-            setLoading(true);
-            const data = await fetchBlogById(id);
-            setBlog(data);
-            setLoading(false);
+            try {
+                setLoading(true);
+                const data = await fetchBlogById(id);
+                setBlog(data);
+            } catch (error) {
+                console.error("Error loading blog:", error);
+            } finally {
+                setLoading(false);
+            }
         };
         loadBlog();
 
@@ -27,11 +33,7 @@ const SingleBlogPage = () => {
     }, [id]);
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-[#EBEBEB] flex items-center justify-center font-['Urbanist']">
-                <div className="text-xl font-bold text-gray-500">Loading...</div>
-            </div>
-        );
+        return <Loading fullScreen />;
     }
 
     if (!blog) {
@@ -60,7 +62,7 @@ const SingleBlogPage = () => {
                 title={blog.title}
                 description={blog.Excerpt}
                 keywords={`advertising blog, ${blog.title}, marketing article, creative news`}
-                ogImage={BACKEND_URL + blog.image}
+                ogImage={blog.image}
                 ogType="article"
             />
 
@@ -95,7 +97,7 @@ const SingleBlogPage = () => {
                     {/* Hero Image */}
                     <div className="rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.1)] mb-16 aspect-video">
                         <img
-                            src={BACKEND_URL + blog.image}
+                            src={blog.image}
                             alt={blog.title}
                             className="w-full h-full object-cover"
                         />

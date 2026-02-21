@@ -71,8 +71,8 @@ export default function Hero() {
       />
 
       {/* CONTENT */}
-      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 xl:pt-[12rem] 2xl:px-16 py-20 md:py-24 xl:py-32 h-full flex items-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
+      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 md:pt-40 lg:pt-48 xl:pt-[12rem] 2xl:px-16 py-8 md:py-24 xl:py-32 h-full flex items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-12 items-center w-full max-w-7xl mx-auto">
 
           {/* LEFT TEXT */}
           {slides.length > 0 && slides[index] && (
@@ -126,7 +126,7 @@ export default function Hero() {
                 </p>
 
                 {/* BUTTON */}
-                <div className="mt-10">
+                <div className="mt-6 md:mt-10">
 
                   <a href="/contact" className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-full border border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white transition ">
                     Contact Us →
@@ -151,7 +151,7 @@ export default function Hero() {
                 className="relative "
               >
                 <img
-                  src={`${BACKEND_URL}${slides[index].image}`}
+                  src={`${slides[index].image}`}
                   alt=""
                   className="
                     w-full max-w-4xl
@@ -159,6 +159,7 @@ export default function Hero() {
                     drop-shadow-[0_60px_120px_rgba(255,138,0,0.85)]
                     object-cover
                     rounded-2xl
+                    max-h-[30vh] md:max-h-none
                   "
                 />
 

@@ -1,8 +1,10 @@
-import { Play, ShieldCheck, PieChart, Users, Facebook, Twitter, Linkedin, Instagram, ArrowUpRight } from "lucide-react";
+import { Play, ShieldCheck, PieChart, Users, Facebook, Twitter, Linkedin, Instagram, ArrowUpRight, Eye, Target, Zap } from "lucide-react";
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
 import { Link } from 'react-router-dom';
 import SEO from "../components/SEO";
+import about1 from '../assets/abt1.jpeg'
+import about2 from '../assets/abt2.jpeg'
 
 // --- Hero Section ---
 const HeroSection = () => {
@@ -48,8 +50,19 @@ const IntroSection = () => {
                     </div>
 
                     <div className="flex flex-col justify-center space-y-6 text-gray-600 font-medium text-lg">
+                        <p className="text-[#FF8A00] font-['Oswald'] font-bold uppercase tracking-wider">
+                            Where powerful brand stories unfold through innovation, reach, and impeccable visibility.
+                        </p>
                         <p>
-                            We are a creative agency that helps brands grow. Our team is dedicated to providing the best digital marketing solutions to help your business thrive in the competitive market.
+                            At Hope Ad Solutions, our mission is crafted with passion, precision, and a touch of digital magic.
+                            We transform everyday bus journeys into high-impact advertising opportunities with our
+                            eye-level 24-inch and 32-inch LED screens.
+                        </p>
+                        <p>
+                            Serving businesses across Kerala, including Thrissur, we deliver targeted digital campaigns
+                            designed to capture attention and boost brand recall. With strategic placement and
+                            high-definition displays, we ensure your message reaches a captive audience at the
+                            perfect time — making your brand truly unforgettable.
                         </p>
                     </div>
                 </div>
@@ -57,9 +70,9 @@ const IntroSection = () => {
                 {/* Features Row */}
                 <div className="grid md:grid-cols-3 gap-6 mb-20">
                     {[
-                        { icon: ShieldCheck, title: "Best Price Guaranteed", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-                        { icon: PieChart, title: "Finance Analysis", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-                        { icon: Users, title: "Professional Team", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." }
+                        { icon: Eye, title: "Eye-Level Maximum Visibility", desc: "Your ads are placed on 24-inch HD LED screens inside buses at direct eye-level, ensuring strong attention and high brand recall." },
+                        { icon: Target, title: "Strategic & Targeted Reach", desc: "Campaigns are carefully positioned across key routes in Kerala, including Thrissur, to reach a captive and relevant audience." },
+                        { icon: Zap, title: "Customized High-Impact Campaigns", desc: "Every advertisement is tailored to your brand — delivering professional execution and memorable brand experiences." }
                     ].map((item, idx) => (
                         <div key={idx} className="bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 flex items-start gap-4 hover:-translate-y-2 transition-transform duration-300 group">
                             <div className="w-14 h-14 bg-[#FF4D30]/10 rounded-full flex items-center justify-center flex-shrink-0 text-[#FF4D30] group-hover:bg-[#FF4D30] group-hover:text-white transition-colors">
@@ -78,7 +91,7 @@ const IntroSection = () => {
                     <div className="lg:col-span-7 relative group">
                         <div className="absolute -inset-4 bg-gradient-to-r from-orange-100 to-transparent blur-xl opacity-50 rounded-3xl" />
                         <img
-                            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
+                            src={about2}
                             alt="Office Team"
                             className="relative z-10 w-full h-[400px] md:h-[500px] object-cover rounded-[2rem] shadow-2xl"
                         />
@@ -86,7 +99,7 @@ const IntroSection = () => {
                     <div className="lg:col-span-5 relative lg:-ml-24 z-20">
                         <div className="relative rounded-[2rem] overflow-hidden border-[8px] border-[#EBEBEB] shadow-[0_30px_60px_rgba(0,0,0,0.15)] group hover:scale-105 transition-transform duration-500">
                             <img
-                                src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2032&auto=format&fit=crop"
+                                src={about1}
                                 alt="Discussion"
                                 className="w-full h-[300px] object-cover"
                             />

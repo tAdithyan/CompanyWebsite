@@ -1,30 +1,44 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import TopBar from './components/TopBar';
+import { motion, AnimatePresence } from "framer-motion";
+import { HelmetProvider } from 'react-helmet-async';
+
+// Layout & Components
 import Header from './components/header';
 import Hero from './components/hero';
 import WhyChooseUs from './components/WhyChooseUse';
-import { SpotlightInitiatives } from './components/Spotlight';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import AboutCompany from "./components/About";
-import ServicesSection from "./components/service";
-import BillboardGrid from "./components/BillboardGrid";
 import TestimonialCarousel from "./components/Testimonial";
+import Clients from "./components/Clients";
+import LocationModal from "./components/LocationModal";
+import ScrollToTop from "./components/ScrollToTop";
+import WhatsAppButton from "./components/WhatsAppButton";
+import SEO from "./components/SEO";
+
+// Pages
 import AboutPage from "./pages/About";
 import ServicesPage from "./pages/Services";
 import BlogsPage from "./pages/Blogs";
 import SingleBlogPage from "./pages/SingleBlog";
+import ContactPage from "./pages/Contact";
+import WhyChooseUsPage from "./pages/WhyChooseUs";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/admin/Login";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminOffers from "./pages/admin/AdminOffers";
+import AdminContacts from "./pages/admin/AdminContacts";
 
-import OfferSection from "./components/offersection";
-import LocationModal from "./components/LocationModal";
+// Context & Data
+import { DataProvider } from "./context/DataContext";
+import { AuthProvider } from "./context/AuthContext";
+import AdminLayout from "./components/admin/AdminLayout";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { trackVisitorLocation } from "./data/analytics";
-import { HelmetProvider } from 'react-helmet-async';
 
-import SEO from "./components/SEO";
-
-// Home Component containing existing sections
+// Home Component
 const Home = () => {
   return (
     <main className="relative w-full min-h-screen bg-[#EBEBEB]">
@@ -35,55 +49,54 @@ const Home = () => {
         ogType="website"
       />
       <Header />
-
-      {/* Hero Section - Only this one has overlay effect */}
       <Section id="hero">
         <Hero />
       </Section>
-
-      {/* About Section - Normal scroll with solid background */}
       <section id="about" className="relative z-20">
         <AboutCompany />
       </section>
-
-      {/* Offer Section (Billboard Style)
-      <section id="offers" className="relative z-30">
-        <OfferSection />
-      </section> */}
-
-      {/* Spotlight - Normal scroll */}
-      <section id="spotlight" className="relative z-40">
-        <SpotlightInitiatives />
+      <section id="clients" className="relative z-30">
+        <Clients />
       </section>
-
       <section id="testimonials" className="relative z-40">
         <TestimonialCarousel />
       </section>
-
-      {/* Contact - Normal scroll */}
       <section id="contact" className="relative z-40">
         <Contact />
       </section>
-
       <Footer />
     </main>
   );
 };
 
-import { DataProvider } from "./context/DataContext";
-import { AuthProvider } from "./context/AuthContext";
-import AdminLayout from "./components/admin/AdminLayout";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
-import Dashboard from "./pages/admin/Dashboard";
-import AdminBlogs from "./pages/admin/AdminBlogs";
-import AdminOffers from "./pages/admin/AdminOffers";
-import AdminContacts from "./pages/admin/AdminContacts";
-import Login from "./pages/admin/Login";
-import ScrollToTop from "./components/ScrollToTop";
-import ContactPage from "./pages/Contact";
-import WhatsAppButton from "./components/WhatsAppButton";
+// Component to handle conditional rendering of global elements
+const GlobalElements = ({ showLocationModal, onAcceptLocation, onCancelLocation }) => {
+  const location = useLocation();
+
+  // Define routes where WhatsApp button SHOULD NOT appear
+  const hideOnRoutes = ["/admin", "/admin/login", "/admin/blogs", "/admin/offers", "/admin/contacts"];
+
+  // Also check if it's a 404 (any route not explicitly matched in hideOnRoutes and not a main route)
+  const isMainRoute = ["/", "/about", "/services", "/blogs", "/blog", "/contact", "/why-choose-us"].some(path =>
+    location.pathname === path || location.pathname.startsWith("/blog/")
+  );
+
+  const shouldShowWhatsApp = isMainRoute && !hideOnRoutes.includes(location.pathname);
+
+  return (
+    <>
+      {shouldShowWhatsApp && <WhatsAppButton />}
+      <LocationModal
+        isOpen={showLocationModal}
+        onAccept={onAcceptLocation}
+        onCancel={onCancelLocation}
+      />
+    </>
+  );
+};
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [showLocationModal, setShowLocationModal] = useState(() => {
     return localStorage.getItem("locationPermission") === null;
   });
@@ -93,14 +106,10 @@ function App() {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
         {
-          headers: {
-            "User-Agent": "your-app-name", // IMPORTANT
-          },
+          headers: { "User-Agent": "billford-advertising" },
         }
       );
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error("Reverse geocoding failed:", error);
     }
@@ -111,21 +120,16 @@ function App() {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-
           const locationData = await getAddressFromCoords(latitude, longitude);
-
           if (locationData) {
-            // Track in backend
             try {
               await trackVisitorLocation({
                 city: locationData.address.state_district || locationData.address.city || locationData.address.town
               });
-              console.log("Location tracked successfully in backend");
             } catch (err) {
               console.error("Failed to track location in backend:", err);
             }
           }
-
           localStorage.setItem("locationPermission", "granted");
         },
         (error) => {
@@ -133,30 +137,19 @@ function App() {
           localStorage.setItem("locationPermission", "denied");
         }
       );
-    } else {
-      console.log("Geolocation is not supported by this browser.");
     }
   };
 
-  const onAcceptLocation = () => {
-    setShowLocationModal(false);
-    handleFetchLocation();
-  };
-
-  const onCancelLocation = () => {
-    setShowLocationModal(false);
-    localStorage.setItem("locationPermission", "denied");
-  };
-
   useEffect(() => {
-    const permission = localStorage.getItem("locationPermission");
-    if (permission === "granted") {
+    if (localStorage.getItem("locationPermission") === "granted") {
       handleFetchLocation();
     }
   }, []);
 
   return (
     <HelmetProvider>
+
+
       <AuthProvider>
         <DataProvider>
           <Router>
@@ -168,11 +161,8 @@ function App() {
               <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/blog/:id" element={<SingleBlogPage />} />
               <Route path="/contact" element={<ContactPage />} />
-
-              {/* Admin Login */}
+              <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/admin/login" element={<Login />} />
-
-              {/* Protected Admin Routes */}
               <Route path="/admin" element={<ProtectedRoute />}>
                 <Route element={<AdminLayout />}>
                   <Route index element={<Dashboard />} />
@@ -181,12 +171,18 @@ function App() {
                   <Route path="contacts" element={<AdminContacts />} />
                 </Route>
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
-            <WhatsAppButton />
-            <LocationModal
-              isOpen={showLocationModal}
-              onAccept={onAcceptLocation}
-              onCancel={onCancelLocation}
+            <GlobalElements
+              showLocationModal={showLocationModal}
+              onAcceptLocation={() => {
+                setShowLocationModal(false);
+                handleFetchLocation();
+              }}
+              onCancelLocation={() => {
+                setShowLocationModal(false);
+                localStorage.setItem("locationPermission", "denied");
+              }}
             />
           </Router>
         </DataProvider>
@@ -195,14 +191,13 @@ function App() {
   );
 }
 
-// Section component with overlay effect - only used for Hero
 function Section({ children, id }) {
   return (
     <motion.section
       id={id}
-      className="h-screen w-full sticky top-0 overflow-hidden"
+      className="min-h-screen w-full md:h-screen sticky top-0 overflow-hidden bg-[#EBEBEB]"
     >
-      <div className="h-full w-full relative">
+      <div className="h-full w-full relative flex items-center">
         {children}
       </div>
     </motion.section>

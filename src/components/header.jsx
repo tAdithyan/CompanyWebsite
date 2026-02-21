@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
+import logo from "../assets/logo.png";
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,7 +39,7 @@ export default function Header() {
             {/* LOGO */}
             <div className="flex items-center gap-2 sm:gap-3 group">
               <img
-                src="https://cdn.freebiesupply.com/logos/large/2x/billboard-01-logo-png-transparent.png"
+                src={logo}
                 alt="Logo"
                 className={`transition-all duration-500 group-hover:scale-110 ${isScrolled
                   ? "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-18"
@@ -52,10 +54,9 @@ export default function Header() {
                 { name: "Home", path: "/" },
                 { name: "About", path: "/about" },
                 { name: "Services", path: "/services" },
+                { name: "Why Choose Us", path: "/why-choose-us" },
                 { name: "Blogs", path: "/blogs" },
                 { name: "Contact Us", path: "/contact" },
-
-
               ].map((item) => (
                 <Link
                   key={item.name}
@@ -107,7 +108,7 @@ export default function Header() {
         {/* Mobile Menu Header */}
         <div className=" p-4 sm:p-6 flex justify-between items-center">
           <img
-            src="https://cdn.freebiesupply.com/logos/large/2x/billboard-01-logo-png-transparent.png"
+            src={logo}
             alt="Logo"
             className="h-[4rem] sm:h-12 w-auto"
           />
@@ -125,11 +126,9 @@ export default function Header() {
             { name: "Home", path: "/" },
             { name: "About", path: "/about" },
             { name: "Services", path: "/services" },
+            { name: "Why Choose Us", path: "/why-choose-us" },
             { name: "Blogs", path: "/blogs" },
-            { name: "Solutions", path: "#" },
-            { name: "Career", path: "#" },
-            { name: "Industries", path: "#" },
-            { name: "Partners", path: "#" },
+            { name: "Contact Us", path: "/contact" },
           ].map((item) => (
             <Link
               key={item.name}

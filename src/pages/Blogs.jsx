@@ -10,6 +10,7 @@ import SEO from "../components/SEO";
 import { Link } from "react-router-dom";
 import { useData } from "../context/DataContext";
 import { fetchBlogs } from "../data/blogs";
+import Loading from "../components/common/Loading";
 
 const BlogCard = ({ blog, featured = false }) => (
     <Link to={`/blog/${blog._id}`} className="block h-full">
@@ -22,7 +23,7 @@ const BlogCard = ({ blog, featured = false }) => (
             {/* Image Container */}
             <div className={`overflow-hidden relative ${featured ? 'h-64 md:h-full' : 'h-64'}`}>
                 <img
-                    src={BACKEND_URL + blog.image}
+                    src={blog.image}
                     alt={blog.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -55,14 +56,27 @@ const BlogCard = ({ blog, featured = false }) => (
 
 const BlogsPage = () => {
     const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const loadBlogs = async () => {
-            const data = await fetchBlogs();
-            console.log(data);
-            setBlogs(data || []);
+            try {
+                setLoading(true);
+                const data = await fetchBlogs();
+                setBlogs(data || []);
+            } catch (error) {
+                console.error("Error loading blogs:", error);
+            } finally {
+                setLoading(false);
+            }
         };
         loadBlogs();
     }, []);
+
+    if (loading) {
+        return <Loading fullScreen />;
+    }
+
     return (
         <div className="min-h-screen bg-[#EBEBEB] text-[#111827] relative overflow-hidden">
             <Header />

@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import homeimg from "../assets/Home.jpeg";
 
 const AboutCompany = () => {
   return (
@@ -25,19 +26,43 @@ const AboutCompany = () => {
 
               {/* Badge */}
               <div className="absolute bottom-6 left-6 right-6 bg-white/80 backdrop-blur-md rounded-xl p-6 border border-gray-200">
-                <div className="flex items-center justify-between">
+                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4  items-center justify-between">
                   <div>
                     <p className="font-['Oswald'] text-3xl font-bold text-[#111827]">
-                      15+
+                      30K+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Daily Viewers
+                    </p>
+                  </div>
+                   <div>
+                    <p className="font-['Oswald'] text-3xl font-bold text-[#111827]">
+                      100+
                     </p>
                     <p className="text-sm text-gray-500">
-                      Years of Excellence
+                       Ad Plays Per Day
                     </p>
                   </div>
-
-                  <div className="w-12 h-12 bg-[#FF8A00] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,138,0,0.4)]">
-                    <ArrowUpRight className="w-5 h-5 text-white" />
+                   <div>
+                    <p className="font-['Oswald'] text-3xl font-bold text-[#111827]">
+                      10+
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Strategic Bus Routes
+                    </p>
                   </div>
+                   <div>
+                    <p className="font-['Oswald'] text-3xl font-bold text-[#111827]">
+                     24/7
+                    </p>
+                    <p className="text-sm text-gray-500">
+                     Digital Management
+                    </p>
+                  </div>
+                  
+
+                  {/* <div className="w-12 h-12 bg-[#FF8A00] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,138,0,0.4)]">
+                    <ArrowUpRight className="w-5 h-5 text-white" />
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -68,22 +93,20 @@ const AboutCompany = () => {
             </h2>
 
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Born from a passion for bold creativity and data-driven results,
-              we help brands stand out in a crowded market.
+              At Hope Ad Solutions, we transform everyday commutes into powerful marketing opportunities through high-definition 24-inch LED screens strategically placed inside buses at eye-level behind the driver’s seat.
             </p>
 
             <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-              Every campaign is designed to capture attention, create impact,
-              and deliver measurable growth.
+              Serving businesses across Kerala, including Thrissur, we deliver targeted, high-impact digital campaigns designed to capture attention, increase brand recall, and drive real engagement.
             </p>
 
             {/* Feature List */}
             <div className="grid sm:grid-cols-2 gap-6">
               {[
-                "Creative Excellence",
-                "Strategic Reach",
-                "Measurable Results",
-                "Full-Service Execution",
+                "High-Definition 24-Inch LED Displays at Eye-Level",
+                "Strategic Bus Route Placement for Maximum Exposure",
+                "Customized Campaigns for Local & Enterprise Brands",
+                "Professional Execution with Dedicated Technical Support",
               ].map((title, i) => (
                 <div key={i} className="flex items-start gap-4 group">
                   <div className="w-10 h-10 rounded-lg bg-[#FF8A00]/10 flex items-center justify-center group-hover:bg-[#FF8A00] transition">

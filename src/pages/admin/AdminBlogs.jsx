@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import { Pencil, Trash2, Plus, X, Image as ImageIcon } from "lucide-react";
 import { fetchBlogs, createBlog, updateBlog, deleteBlog as deleteBlogApi } from "../../data/blogs";
+import Loading from "../../components/common/Loading";
+
 const AdminBlogs = () => {
     const [blogs, setBlogs] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBlog, setEditingBlog] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -17,18 +21,16 @@ const AdminBlogs = () => {
         readTime: "5 min read"
     });
 
-    // const fetchBlogs = async () => {
-    //     try {
-    //         const response = await axiosInstance.get('/blogs');
-    //         setBlogs(response.data.data);
-    //     } catch (error) {
-    //         console.error("Error fetching blogs:", error);
-    //     }
-    // };
-
     const refreshBlogs = async () => {
-        const data = await fetchBlogs();
-        setBlogs(data || []);
+        try {
+            setLoading(true);
+            const data = await fetchBlogs();
+            setBlogs(data || []);
+        } catch (error) {
+            console.error("Error fetching blogs:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -81,6 +83,7 @@ const AdminBlogs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setActionLoading(true);
 
         const data = new FormData();
         data.append('title', formData.title);
@@ -96,7 +99,7 @@ const AdminBlogs = () => {
             } else {
                 await createBlog(data);
             }
-            refreshBlogs();
+            await refreshBlogs();
             setIsModalOpen(false);
         } catch (error) {
             console.error("Error saving blog:", error);
@@ -104,22 +107,32 @@ const AdminBlogs = () => {
                 ? (Array.isArray(error.response.data.error) ? error.response.data.error.join(", ") : error.response.data.error)
                 : "Failed to save blog. Please try again.";
             alert(errorMessage);
+        } finally {
+            setActionLoading(false);
         }
     };
 
     const deleteBlog = async (id) => {
         if (window.confirm("Are you sure you want to delete this blog?")) {
             try {
+                setActionLoading(true);
                 await deleteBlogApi(id);
-                refreshBlogs();
+                await refreshBlogs();
             } catch (error) {
                 console.error("Error deleting blog:", error);
+            } finally {
+                setActionLoading(false);
             }
         }
     };
 
+    if (loading && blogs.length === 0) {
+        return <Loading />;
+    }
+
     return (
         <div>
+            {actionLoading && <Loading fullScreen />}
             <div className="flex items-center justify-between mb-8">
                 <h1 className="font-['Oswald'] text-3xl font-bold text-[#111827]">Manage Blogs</h1>
                 <button
@@ -154,7 +167,7 @@ const AdminBlogs = () => {
                                 <td className="p-6">
                                     {blog.image && (
                                         <img
-                                            src={`http://localhost:3000${blog.image}`}
+                                            src={`${blog.image}`}
                                             alt={blog.title}
                                             className="w-16 h-16 object-cover rounded-md"
                                         />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Play, Check, Video, Camera, Clapperboard, MonitorPlay, ArrowUpRight } from 'lucide-react';
 import Header from "../components/header";
 import { Footer } from "../components/Footer";
@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import SEO from "../components/SEO";
 
 const Services = () => {
+    const [isExpanded, setIsExpanded] = useState(false);
     return (
         <div className="min-h-screen bg-[#EBEBEB] text-[#111827] relative overflow-hidden">
             {/* Global Background Glows */}
@@ -58,14 +59,28 @@ const Services = () => {
                                 </h2>
                             </div>
 
-                            <p className="text-gray-600 leading-relaxed text-lg font-medium">
-                                We specialize in bringing your vision to life through high-quality visual storytelling.
-                                From concept to final edit, we ensure every frame works harder for your brand.
+                            <p className={`text-gray-600 leading-relaxed text-lg font-medium transition-all duration-500 ${!isExpanded ? 'line-clamp-5' : ''}`}>
+                                Our Services
+                                Exquisite digital advertising experiences crafted with precision. From intimate local campaigns to grand regional displays, our services bring visibility, high impact, and memorable presentation to every brand story.
+                                <br /><br />
+                                <strong>Transit Advertising in Buses</strong><br />
+                                Create unforgettable brand moments with eye-level engagement.
+                                We offer thoughtfully curated digital ad slots on high-definition 24-inch and 32-inch LED screens placed directly behind the driver’s seat. This ensures your message feels premium, meaningful, and impossible for passengers to miss throughout their entire journey.
+                                <br /><br />
+                                <strong>Restaurant Advertising</strong><br />
+                                Perfect for localized reach during leisure and dining hours.
+                                Our restaurant advertising solutions place your brand in front of a relaxed and captive audience. With strategically mounted digital screens, we ensure your business reflects high standards and captures the attention of diners across the Thrissur district.
+                                <br /><br />
+                                <strong>Outdoor Advertising</strong><br />
+                                Professional displays that reflect your brand’s strength and standards.
                             </p>
 
-                            <button className="px-8 py-4 bg-white border border-[#FF8A00] text-[#FF8A00] rounded-full font-bold uppercase tracking-wider hover:bg-[#FF8A00] hover:text-white transition-all shadow-lg hover:shadow-orange-500/30 flex items-center gap-2 group">
-                                Learn More
-                                <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="px-8 py-4 bg-white border border-[#FF8A00] text-[#FF8A00] rounded-full font-bold uppercase tracking-wider hover:bg-[#FF8A00] hover:text-white transition-all shadow-lg hover:shadow-orange-500/30 flex items-center gap-2 group"
+                            >
+                                {isExpanded ? 'Show Less' : 'Learn More'}
+                                <ArrowUpRight className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-[-45deg]' : 'group-hover:rotate-45'}`} />
                             </button>
                         </div>
 
@@ -159,7 +174,7 @@ const Services = () => {
                 </section>
 
                 {/* 5. Brand Logos (Clean Style) */}
-                <section className="py-16 border-t border-gray-200/60">
+                {/* <section className="py-16 border-t border-gray-200/60">
                     <div className="container mx-auto px-6 max-w-7xl">
                         <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-10">Trusted By</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -173,7 +188,7 @@ const Services = () => {
                             <div className="flex justify-center items-center text-2xl font-black font-['Oswald'] text-gray-800">BITSTREAM</div>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* 6. CTA Footer Banner (Kept visual impact but updated typography) */}
                 <section className="relative h-[50vh] flex items-center justify-center bg-fixed bg-cover bg-center mt-10"
@@ -188,9 +203,12 @@ const Services = () => {
                             READY TO TAKE THE <br />
                             <span className="text-[#FF8A00]">PERFECT SHOT?</span>
                         </h2>
-                        <button className="px-10 py-4 bg-[#FF8A00] text-white rounded-full font-bold uppercase tracking-wider hover:bg-[#E07900] transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,138,0,0.5)]">
+                        <Link
+                            to="/contact"
+                            className="inline-block px-10 py-4 bg-[#FF8A00] text-white rounded-full font-bold uppercase tracking-wider hover:bg-[#E07900] transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,138,0,0.5)] text-center"
+                        >
                             Get Started
-                        </button>
+                        </Link>
                     </div>
                 </section>
 

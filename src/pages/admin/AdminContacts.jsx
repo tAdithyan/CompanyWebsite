@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { getContacts, deleteContact } from "../../data/contacts";
 import { Trash2, Mail, Phone, Calendar, User, Briefcase } from "lucide-react";
+import Loading from "../../components/common/Loading";
 
 const AdminContacts = () => {
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
 
     const fetchAllContacts = async () => {
         try {
+            setLoading(true);
             const data = await getContacts();
             setContacts(data.data || []);
         } catch (error) {
@@ -24,24 +27,24 @@ const AdminContacts = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this contact submission?")) {
             try {
+                setActionLoading(true);
                 await deleteContact(id);
-                fetchAllContacts();
+                await fetchAllContacts();
             } catch (error) {
                 console.error("Error deleting contact:", error);
+            } finally {
+                setActionLoading(false);
             }
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FF8A00]"></div>
-            </div>
-        );
+    if (loading && contacts.length === 0) {
+        return <Loading />;
     }
 
     return (
         <div>
+            {actionLoading && <Loading fullScreen />}
             <div className="flex items-center justify-between mb-8">
                 <h1 className="font-['Oswald'] text-3xl font-bold text-[#111827]">Contact Submissions</h1>
                 <div className="text-sm font-medium text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
